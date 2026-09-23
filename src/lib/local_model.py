@@ -2,8 +2,20 @@ import os
 import json
 import torch
 import random
-from transformers import pipeline as pipeline_function, AutoTokenizer, AutoModelForCausalLM, Pipeline
 from tqdm import tqdm
+
+try:
+    from vllm import SamplingParams
+except ImportError:
+    SamplingParams = None
+
+try:
+    from transformers import pipeline as pipeline_function, AutoTokenizer, AutoModelForCausalLM, Pipeline
+except ImportError:
+    pipeline_function = None
+    AutoTokenizer = None
+    AutoModelForCausalLM = None
+    Pipeline = object
 
 def _get_sorted_json_files(directory_path):
     try:
@@ -33,6 +45,18 @@ def _run_local_generation(model_obj, messages, model_family='llama'):
     top_p=0.95
 
     try:
+        if hasattr(model_obj, "chat") and SamplingParams is not None:
+            sampling_params = SamplingParams(
+                max_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+            )
+            outputs = model_obj.chat(messages, sampling_params=sampling_params)
+            if outputs and outputs[0].outputs:
+                return outputs[0].outputs[0].text.strip()
+            print("Warning: Unexpected output format from vLLM model.")
+            return None
+
         if model_family == 'llama' and isinstance(model_obj, Pipeline):
             pipe = model_obj
             terminators = [

@@ -1,0 +1,767 @@
+--- Starting Analysis: all_at_once ---
+Timestamp: 2026-09-23 14:52:56.937169
+Model Family: llama
+Model Used: meta-llama/Llama-3.2-3B
+Input Directory: data/Who_and_When/Who_When/Algorithm-Generated
+Is Handcrafted: False
+--------------------
+
+--- Starting Local All-at-Once Analysis (llama) ---
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 1.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 2.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 3.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 4.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 5.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 6.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 7.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 8.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 9.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 10.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 11.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 12.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 13.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 14.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 15.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 16.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 17.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 18.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 19.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 20.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 21.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 22.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 23.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 24.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 25.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 26.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 27.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 28.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 29.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 30.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 31.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 32.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 33.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 34.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 35.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 36.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 37.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 38.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 39.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 40.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 41.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 42.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 43.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 44.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 45.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 46.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 47.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 48.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 49.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 50.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 51.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 52.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 53.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 54.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 55.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 56.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 57.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 58.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 59.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 60.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 61.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 62.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 63.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 64.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 65.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 66.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 67.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 68.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 69.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 70.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 71.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 72.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 73.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 74.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 75.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 76.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 77.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 78.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 79.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 80.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 81.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 82.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 83.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 84.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 85.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 86.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 87.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 88.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 89.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 90.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 91.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 92.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 93.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 94.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 95.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 96.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 97.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 98.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 99.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 100.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 101.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 102.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 103.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 104.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 105.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 106.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 107.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 108.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 109.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 110.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 111.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 112.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 113.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 114.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 115.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 116.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 117.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 118.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 119.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 120.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 121.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 122.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 123.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 124.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 125.json:
+Failed to get prediction from local model.
+
+==================================================
+
+Error during local model execution (llama): As of transformers v4.44, default chat template is no longer allowed, so you must provide a chat template if the tokenizer does not define one.
+Prediction for 126.json:
+Failed to get prediction from local model.
+
+==================================================
+
+--------------------
+--- Analysis Complete ---

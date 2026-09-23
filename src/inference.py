@@ -6,16 +6,27 @@ import datetime
 from dotenv import load_dotenv
 from tqdm import tqdm
 import torch
-from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 from openai import AzureOpenAI
 
-from Lib.utils import (
+try:
+    from vllm import LLM as VLLMClient
+except ImportError:
+    VLLMClient = None
+
+try:
+    from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
+except ImportError:
+    pipeline = None
+    AutoModelForCausalLM = None
+    AutoTokenizer = None
+
+from lib.utils import (
     all_at_once as gpt_all_at_once,
     step_by_step as gpt_step_by_step,
     binary_search as gpt_binary_search
 )
 
-from Lib.local_model import (
+from lib.local_model import (
     analyze_all_at_once_local,
     analyze_step_by_step_local,
     analyze_binary_search_local
@@ -23,7 +34,7 @@ from Lib.local_model import (
 
 
 KNOWN_GPT_MODELS = {"gpt-4o", "gpt4", "gpt4o-mini"}
-LOCAL_LLAMA_ALIASES = {"llama-8b", "llama-70b"}
+LOCAL_LLAMA_ALIASES = {"llama-8b", "llama-70b", "llama-3.1-8B-Instruct", "llama-3.1-70B-Instruct", "llama-3B"}
 LOCAL_QWEN_ALIASES = {"qwen-7b", "qwen-72b"}
 LOCAL_MODEL_ALIASES = LOCAL_LLAMA_ALIASES | LOCAL_QWEN_ALIASES
 ALL_MODELS = list(KNOWN_GPT_MODELS | LOCAL_MODEL_ALIASES)
@@ -31,9 +42,27 @@ ALL_MODELS = list(KNOWN_GPT_MODELS | LOCAL_MODEL_ALIASES)
 LOCAL_MODEL_MAP = {
     "llama-8b": "meta-llama/Llama-3.1-8B-Instruct",
     "llama-70b": "meta-llama/Llama-3.1-70B-Instruct",
+    "llama-3B": "meta-llama/Llama-3.2-3B",
     "qwen-7b": "Qwen/Qwen2.5-7B-Instruct",
     "qwen-72b": "Qwen/Qwen2.5-72B-Instruct",
 }
+
+
+def resolve_local_model_id(model_alias: str, model_path: str = None) -> str:
+    if model_path and model_path.strip():
+        return model_path.strip()
+
+    env_key = model_alias.upper().replace("-", "_") + "_PATH"
+    env_value = os.getenv(env_key)
+    if env_value and env_value.strip():
+        return env_value.strip()
+
+    env_value = os.getenv("LOCAL_MODEL_PATH")
+    if env_value and env_value.strip():
+        return env_value.strip()
+
+    return LOCAL_MODEL_MAP[model_alias]
+
 
 def main():
     load_dotenv()
@@ -50,9 +79,9 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        required=True,
+        default=None,
         choices=ALL_MODELS,
-        help=f"Model identifier. Choose from: {', '.join(ALL_MODELS)}"
+        help=f"Model identifier. Choose from: {', '.join(ALL_MODELS)}. If omitted, uses MODEL or LLAMA_8B_PATH-style environment defaults when available."
     )
     parser.add_argument(
         "--directory_path",
@@ -91,8 +120,33 @@ def main():
         "--device", type=str, default="cuda:1" if torch.cuda.is_available() else "cpu",
         help="Device for local model inference (e.g., 'cuda', 'cuda:0', 'cpu'). Default: 'cuda' if available, else 'cpu'."
     )
+    parser.add_argument(
+        "--model_path",
+        type=str,
+        default=None,
+        help="Optional local model path or Hugging Face repo ID to override the default alias mapping. Useful when a model is cached locally or access is restricted to a gated repo."
+    )
 
     args = parser.parse_args()
+
+    if args.model is None:
+        env_model = os.getenv("MODEL")
+        if env_model and env_model.strip():
+            args.model = env_model.strip()
+        else:
+            for candidate in ["llama-8b", "qwen-7b", "llama-70b", "qwen-72b"]:
+                if candidate in ALL_MODELS:
+                    env_alias = candidate
+                    break
+            else:
+                env_alias = None
+
+            if env_alias is not None:
+                args.model = env_alias
+
+    if args.model is None:
+        print("Error: --model is required unless MODEL or a default local alias is configured in the environment.")
+        sys.exit(1)
 
     client_or_model_obj = None
     model_type = None # gpt, llama, qwen
@@ -123,47 +177,39 @@ def main():
 
     elif args.model in LOCAL_MODEL_ALIASES:
         model_type = 'local'
-        model_id_or_deployment = LOCAL_MODEL_MAP[args.model]
+        model_id_or_deployment = resolve_local_model_id(args.model, args.model_path)
 
         if args.model in LOCAL_LLAMA_ALIASES:
             model_family = 'llama'
-            print(f"Selected local Llama model: {args.model} ({model_id_or_deployment}) on device {args.device}")
-            if not pipeline:
-                 print("Error: transformers library not found or pipeline could not be imported.")
-                 sys.exit(1)
-            try:
-                 print(f"Initializing Llama pipeline for {model_id_or_deployment}...")
-                 client_or_model_obj = pipeline(
-                     "text-generation",
-                     model=model_id_or_deployment,
-                     model_kwargs={"torch_dtype": torch.bfloat16},
-                     device=args.device,
-                 )
-                 print(f"Successfully initialized Llama pipeline on {args.device}.")
-            except Exception as e:
-                print(f"Error initializing Llama pipeline for {model_id_or_deployment}: {e}")
-                sys.exit(1)
-
         elif args.model in LOCAL_QWEN_ALIASES:
             model_family = 'qwen'
-            print(f"Selected local Qwen model: {args.model} ({model_id_or_deployment}) on device {args.device}")
-            if not AutoModelForCausalLM or not AutoTokenizer:
-                 print("Error: transformers library not found or specific classes could not be imported.")
-                 sys.exit(1)
-            try:
-                 print(f"Initializing Qwen model and tokenizer for {model_id_or_deployment}...")
-                 qwen_model = AutoModelForCausalLM.from_pretrained(
-                    model_id_or_deployment,
-                    torch_dtype="auto",
-                    device_map=args.device # Use device_map for potentially large models
-                 )
-                 qwen_tokenizer = AutoTokenizer.from_pretrained(model_id_or_deployment)
-                 client_or_model_obj = (qwen_model, qwen_tokenizer) # Store as tuple
-                 print(f"Successfully initialized Qwen model and tokenizer on {args.device}.")
-            except Exception as e:
-                print(f"Error initializing Qwen model/tokenizer for {model_id_or_deployment}: {e}")
-                print("Make sure you have sufficient VRAM/RAM and necessary libraries (transformers, torch, accelerate).")
+        else:
+            model_family = None
+
+        print(f"Selected local model: {args.model} ({model_id_or_deployment}) on device {args.device}")
+
+        try:
+            if VLLMClient is not None:
+                print(f"Initializing vLLM backend for {model_id_or_deployment}...")
+                client_or_model_obj = VLLMClient(model=model_id_or_deployment, trust_remote_code=True)
+                print(f"Successfully initialized vLLM model for {model_id_or_deployment}.")
+            elif pipeline is not None:
+                print(f"Initializing Hugging Face pipeline for {model_id_or_deployment}...")
+                client_or_model_obj = pipeline(
+                    "text-generation",
+                    model=model_id_or_deployment,
+                    model_kwargs={"torch_dtype": torch.bfloat16},
+                    device=args.device,
+                )
+                print(f"Successfully initialized Hugging Face pipeline on {args.device}.")
+            else:
+                print("Error: neither vLLM nor transformers are available for local inference.")
                 sys.exit(1)
+        except Exception as e:
+            print(f"Error initializing local model for {model_id_or_deployment}: {e}")
+            if VLLMClient is None:
+                print("Make sure you have sufficient VRAM/RAM and necessary libraries (transformers, torch, accelerate).")
+            sys.exit(1)
     else:
         print(f"Error: Invalid model '{args.model}' specified.")
         sys.exit(1)

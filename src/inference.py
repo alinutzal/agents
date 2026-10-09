@@ -35,16 +35,18 @@ from lib.local_model import (
 
 KNOWN_GPT_MODELS = {"gpt-4o", "gpt4", "gpt4o-mini"}
 LOCAL_LLAMA_ALIASES = {"llama-8b", "llama-70b", "llama-3.1-8B-Instruct", "llama-3.1-70B-Instruct", "llama-3B"}
-LOCAL_QWEN_ALIASES = {"qwen-7b", "qwen-72b"}
+LOCAL_QWEN_ALIASES = {"qwen-7b", "qwen-72b", "qwen3-8b", "qwen3-30b"}
 LOCAL_MODEL_ALIASES = LOCAL_LLAMA_ALIASES | LOCAL_QWEN_ALIASES
 ALL_MODELS = list(KNOWN_GPT_MODELS | LOCAL_MODEL_ALIASES)
 
 LOCAL_MODEL_MAP = {
     "llama-8b": "meta-llama/Llama-3.1-8B-Instruct",
     "llama-70b": "meta-llama/Llama-3.1-70B-Instruct",
-    "llama-3B": "meta-llama/Llama-3.2-3B",
+    "llama-3B": "meta-llama/Llama-3.2-3B-Instruct",
     "qwen-7b": "Qwen/Qwen2.5-7B-Instruct",
     "qwen-72b": "Qwen/Qwen2.5-72B-Instruct",
+    "qwen3-8b": "Qwen/Qwen3-8B",
+    "qwen3-30b": "Qwen/Qwen3-30B-A3B",
 }
 
 
@@ -193,6 +195,17 @@ def main():
                 print(f"Initializing vLLM backend for {model_id_or_deployment}...")
                 client_or_model_obj = VLLMClient(model=model_id_or_deployment, trust_remote_code=True)
                 print(f"Successfully initialized vLLM model for {model_id_or_deployment}.")
+            elif model_family == 'qwen' and AutoModelForCausalLM is not None:
+                # The Qwen generation path expects a (model, tokenizer) pair rather than a pipeline.
+                print(f"Initializing Hugging Face model and tokenizer for {model_id_or_deployment}...")
+                tokenizer = AutoTokenizer.from_pretrained(model_id_or_deployment)
+                model = AutoModelForCausalLM.from_pretrained(
+                    model_id_or_deployment,
+                    torch_dtype=torch.bfloat16,
+                    device_map=args.device,
+                )
+                client_or_model_obj = (model, tokenizer)
+                print(f"Successfully initialized Qwen model on {args.device}.")
             elif pipeline is not None:
                 print(f"Initializing Hugging Face pipeline for {model_id_or_deployment}...")
                 client_or_model_obj = pipeline(

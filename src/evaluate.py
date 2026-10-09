@@ -23,8 +23,16 @@ def read_predictions(eval_file):
     for block in blocks:
         content = block.group(2).strip()
         idx = block.group(1).strip()
-        agent_name_match = re.search(r"Agent Name:\s*([\w_]+)", content, re.IGNORECASE)
-        step_number_match = re.search(r"Step Number:\s*(\d+)", content, re.IGNORECASE)
+        # Accept format variants such as "Agent Name: X", "Agent: X", "Agent X:",
+        # "**Agent Name:** X" and "Step: 3", but only at the start of a line.
+        agent_name_match = re.search(
+            r"^[\W_]*(?:\d+[.)]\s*)?Agent(?:\s+Name)?\s*[:\-]?[\s*\"'(\[]*(?!Name\b)([A-Za-z][\w\-]*)",
+            content, re.IGNORECASE | re.MULTILINE
+        )
+        step_number_match = re.search(
+            r"^[\W_]*(?:\d+[.)]\s*)?Step(?:\s+Number)?\s*[:\-]?[\s*\"'(\[]*(\d+)",
+            content, re.IGNORECASE | re.MULTILINE
+        )
 
         if agent_name_match and step_number_match:
             agent_name = agent_name_match.group(1)
@@ -85,9 +93,9 @@ def evaluate_accuracy(predictions, data_path, total_files):
             actual_agent, actual_step = read_actual_data(labeled_file)
 
             if actual_agent is not None and actual_step is not None:
-                if actual_agent in pred['predicted_agent'] :
+                if actual_agent.lower() == pred['predicted_agent'].lower():
                     correct_agent += 1
-                if actual_step in pred['predicted_step'] :
+                if actual_step == pred['predicted_step']:
                     correct_step += 1
             else:
                  print(f"Skipping evaluation for {idx} due to issues reading actual data.")

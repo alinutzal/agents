@@ -79,10 +79,13 @@ def _run_local_generation(model_obj, messages, model_family='llama'):
                  return None
         elif model_family == 'qwen' and isinstance(model_obj, tuple) and len(model_obj) == 2:
             model, tokenizer = model_obj
+            # enable_thinking=False stops Qwen3 from spending the token budget on <think> output;
+            # Qwen2.5 templates ignore it.
             text = tokenizer.apply_chat_template(
                 messages,
                 tokenize=False,
-                add_generation_prompt=True
+                add_generation_prompt=True,
+                enable_thinking=False
             )
             model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
             generated_ids = model.generate(

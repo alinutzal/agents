@@ -1,4 +1,4 @@
-"""Pure utilities for controlled telemetry ablations on Who&When traces.
+﻿"""Pure utilities for controlled telemetry ablations on Who&When traces.
 
 The original Who&When JSON files contain a top-level ``history`` list.  This
 module filters that list while retaining a mapping from the condition-local
@@ -42,6 +42,9 @@ _TOOL_RESULT_PREFIX = re.compile(
     r"^\s*(?:exitcode\s*:|code output\s*:|tool (?:result|output)\s*:|observation\s*:)",
     re.IGNORECASE,
 )
+_ROLE_SUFFIX = re.compile(r"\s*\((?:thought|->\s*[^)]*)\)\s*$", re.IGNORECASE)
+_MARKDOWN_WRAPPER = re.compile(r"^[*_`\"']+|[*_`\"']+$")
+_MARKDOWN_CLOSER = re.compile(r"[*_`\"']+\s*$")
 
 
 @dataclass(frozen=True)
@@ -77,8 +80,37 @@ def speaker_name(entry: Mapping[str, Any]) -> str:
     return "Unknown Agent"
 
 
+def canonical_agent_name(value: Any) -> str:
+    """Normalize formatting and Hand-Crafted routing suffixes on agent labels."""
+
+    name = str(value or "").strip()
+    previous = None
+    while previous != name:
+        previous = name
+        name = _MARKDOWN_WRAPPER.sub("", name).strip()
+        name = _MARKDOWN_CLOSER.sub("", name).strip()
+        name = _ROLE_SUFFIX.sub("", name).strip()
+    return name
+
+
 def is_system_message(entry: Mapping[str, Any]) -> bool:
     return str(entry.get("role", "")).strip().casefold() == "system"
+
+
+def candidate_agents(history: Sequence[Mapping[str, Any]]) -> List[str]:
+    """Return a stable full-trace speaker roster, excluding only system messages."""
+
+    agents: List[str] = []
+    seen = set()
+    for entry in history:
+        if is_system_message(entry):
+            continue
+        agent = canonical_agent_name(speaker_name(entry))
+        key = agent.casefold()
+        if agent and key not in seen:
+            seen.add(key)
+            agents.append(agent)
+    return agents
 
 
 def is_tool_observation(entry: Mapping[str, Any]) -> bool:
@@ -137,12 +169,12 @@ def select_indices(
             if not is_system_message(entry) and not is_tool_observation(entry)
         ]
     if condition == "oracle_responsible_agent":
-        target = str(mistake_agent).strip().casefold()
+        target = canonical_agent_name(mistake_agent).casefold()
         if not target:
             return []
         return [
             i for i, entry in enumerate(history)
-            if speaker_name(entry).strip().casefold() == target
+            if canonical_agent_name(speaker_name(entry)).casefold() == target
         ]
     if condition in {"first_half", "recent_half", "random_half"}:
         keep = int(math.ceil(n_steps / 2))

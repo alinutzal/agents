@@ -1,4 +1,4 @@
-import json
+﻿import json
 import sys
 import tempfile
 import unittest
@@ -11,6 +11,8 @@ if str(SRC_ROOT) not in sys.path:
 
 from lib.telemetry_ablation import (  # noqa: E402
     apply_condition,
+    candidate_agents,
+    canonical_agent_name,
     is_tool_observation,
     select_indices,
     speaker_name,
@@ -37,6 +39,21 @@ class TelemetryClassificationTests(unittest.TestCase):
     def test_speaker_name_supports_both_who_when_subsets(self):
         self.assertEqual(speaker_name({"name": "Excel_Expert", "role": "assistant"}), "Excel_Expert")
         self.assertEqual(speaker_name({"role": "WebSurfer"}), "WebSurfer")
+
+    def test_handcrafted_role_suffixes_are_canonicalized(self):
+        self.assertEqual(canonical_agent_name("Orchestrator (thought)"), "Orchestrator")
+        self.assertEqual(canonical_agent_name("Orchestrator (-> WebSurfer)"), "Orchestrator")
+        self.assertEqual(canonical_agent_name("**Orchestrator** (-> WebSurfer)"), "Orchestrator")
+        history = [
+            {"role": "Orchestrator (thought)", "content": "plan"},
+            {"role": "Orchestrator (-> WebSurfer)", "content": "search"},
+            {"role": "WebSurfer", "content": "result"},
+        ]
+        self.assertEqual(candidate_agents(history), ["Orchestrator", "WebSurfer"])
+        self.assertEqual(
+            select_indices(history, "oracle_responsible_agent", mistake_agent="Orchestrator"),
+            [0, 1],
+        )
 
     def test_tool_observation_uses_role_name_and_content(self):
         self.assertTrue(is_tool_observation({"role": "tool", "content": "ok"}))
@@ -93,12 +110,18 @@ class BuilderIntegrationTests(unittest.TestCase):
         output, row = build_condition_record(SAMPLE, "communication_only", "sample.json", 2026)
         self.assertEqual(len(output["history"]), 3)
         self.assertEqual(row["gold_original_step"], "3")
+        self.assertTrue(row["gold_step_valid"])
         self.assertEqual(row["gold_local_step"], 1)
+        self.assertEqual(
+            output["candidate_agents"], ["Researcher", "Computer_terminal", "Critic"]
+        )
         self.assertTrue(row["gold_step_visible"])
         self.assertEqual(row["local_to_original"]["1"], 3)
 
         without_answer, _ = build_condition_record(SAMPLE, "no_reference_answer", "sample.json", 2026)
         self.assertNotIn("ground_truth", without_answer)
+        _, no_answer_row = build_condition_record(SAMPLE, "no_reference_answer", "sample.json", 2026)
+        self.assertFalse(no_answer_row["view_identical_to_full"])
 
         without_system, system_row = build_condition_record(
             SAMPLE, "no_system_messages", "sample.json", 2026

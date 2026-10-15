@@ -1,4 +1,4 @@
-# Experiment 1: What Agent Telemetry Is Needed for Failure Attribution?
+﻿# Experiment 1: What Agent Telemetry Is Needed for Failure Attribution?
 
 This experiment measures how failure-attribution accuracy changes when an auditor receives different parts of a Who&When execution trace. It is a **matched ablation**: the model, prompt, decoding path, and test traces remain fixed while only the available telemetry changes.
 
@@ -52,7 +52,9 @@ The builder writes:
 - `<output>/manifest.json`, with complete mappings and metadata;
 - `<output>/manifest.csv`, for spreadsheet analysis.
 
-Each manifest row records retained steps and characters as cost proxies, whether the gold decisive step remains visible, and a `local_to_original` map. This map is important: a filtered trace is numbered locally from zero for a clear prompt, then predictions are translated back to original Who&When step numbers before evaluation.
+Each manifest row records retained steps and characters as cost proxies, whether the gold decisive step remains visible, whether the gold agent appears in retained telemetry, and a `local_to_original` map. The builder validates that each gold step is an in-range raw-history index and flags annotation anomalies with `gold_step_valid=false`; do not include those records in localization denominators without a documented reconciliation. It also reports how often a condition is identical to the full telemetry view.
+
+Filtered traces are numbered locally from zero, then predictions are translated back to original Who&When step numbers. Every condition receives the same candidate-agent roster derived from the full trace, so an evidence ablation does not mechanically change the WHO answer space. Hand-Crafted labels such as `Orchestrator (thought)` and `Orchestrator (-> WebSurfer)` are canonicalized to `Orchestrator` consistently in filtering, prompting, parsing, and scoring.
 
 ## 2. Run attribution
 
@@ -70,15 +72,15 @@ python scripts/run_telemetry_experiment.py \
   --device cuda:0
 ```
 
-The default result is `outputs/telemetry/llama-3B.jsonl`. One JSON object is appended and flushed after every trace. Rerunning the command resumes by skipping existing `(condition, trace_id)` pairs; use `--overwrite` to start over. Use `--limit 5` for a per-condition pilot.
+The default result name includes the subset, model alias, and a run-configuration hash, for example `outputs/telemetry/Algorithm-Generated_llama-3B_<run-id>.jsonl`. Every row stores the manifest SHA-256, resolved backend, model/revision, and decoding configuration. Resume is allowed only when the stored run ID matches; a conflicting explicit `--output` fails rather than silently mixing runs. Use `--overwrite` to start over and `--limit 5` for a per-condition pilot.
 
-For the paper, keep decoding configuration identical across all conditions and report the exact model revision/environment.
+For final runs, pass an immutable model commit with `--model-revision`, keep decoding configuration identical across conditions, and set `--max-input-tokens` to an explicit context preflight limit. Token counts are recorded. Over-limit prompts and generation failures are reported but are **not** written as completed predictions, so they can be retried.
 
 ## 3. Analyze results
 
 ```bash
 python scripts/analyze_telemetry_experiment.py \
-  outputs/telemetry/llama-3B.jsonl \
+  outputs/telemetry/Algorithm-Generated_llama-3B_<run-id>.jsonl \
   --baseline full \
   --output-dir outputs/telemetry/analysis
 ```
@@ -89,12 +91,14 @@ Outputs:
 - `paired_differences.csv`: paired accuracy differences against `full` with 95% bootstrap intervals;
 - `analysis.json`: the complete machine-readable analysis.
 
-Metrics include agent accuracy, exact original-step accuracy, step accuracy within ±1, joint WHO+WHEN accuracy, parse rate, mean absolute step error, gold-step visibility, retained trace fraction, and latency.
+Metrics include agent accuracy, exact original-step accuracy, step accuracy within ±1, joint WHO+WHEN accuracy, parse rate, annotation validity, agent/step visibility, retained trace fraction, and latency. Primary step and joint metrics exclude invalid gold-step annotations. The analysis also reports agent accuracy conditional on the gold agent being visible and localization accuracy conditional on a valid visible gold step. Mean absolute step error is explicitly labeled as conditional on a valid gold label and mapped prediction and includes its missing-count denominator.
 
 ## Experimental cautions
 
 - **Do not interpret `oracle_responsible_agent` as a deployable method.** It uses the label to select telemetry and is only an upper-bound diagnostic.
-- A removed gold step makes exact localization impossible. Report gold-step visibility alongside accuracy rather than hiding this effect.
+- A removed gold step makes exact localization impossible. Report both end-to-end localization and the predeclared visible-only secondary metric.
+- Some public Hand-Crafted annotations have out-of-range `mistake_step` values. Report `gold_step_validity`; reconcile or exclude these from localization claims while retaining them for WHO if appropriate.
+- On classic Who&When, `no_system_messages` may be identical to `full` because there are no `role=system` history entries and instruction-like text can be embedded in assistant content. Treat the builder's identical-view diagnostic as a manipulation check; do not claim an instruction-telemetry effect when the intervention is a no-op.
 - Character and whitespace-token counts are dependency-free cost proxies. For final cost claims, also record tokens from the selected model tokenizer.
 - Run algorithm-generated and hand-crafted subsets separately before pooling them; their speaker conventions and architectures differ.
 - The experiment runner defaults to deterministic greedy decoding (`--temperature 0`) to isolate the telemetry intervention. If sampling is enabled, repeat each condition under matched documented seeds rather than treating one stochastic generation as definitive.

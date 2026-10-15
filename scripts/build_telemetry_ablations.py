@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Build matched Who&When trace views for the first telemetry experiment.
 
 The command reads the original per-trace JSON files and writes one directory per
@@ -29,6 +29,8 @@ if str(SRC_ROOT) not in sys.path:
 from lib.telemetry_ablation import (  # noqa: E402
     DEFAULT_CONDITIONS,
     apply_condition,
+    candidate_agents,
+    canonical_agent_name,
     serialized_history_size,
 )
 
@@ -73,6 +75,8 @@ def build_condition_record(
     result = apply_condition(source, condition, trace_id=trace_id, seed=seed)
     output = dict(source)
     output["history"] = result.history
+    roster = candidate_agents(source["history"])
+    output["candidate_agents"] = roster
     # Avoid giving the reference answer to this condition while leaving the
     # original file untouched.  The label fields remain for offline scoring.
     if condition == "no_reference_answer":
@@ -86,7 +90,20 @@ def build_condition_record(
     retained_system_prompt = output.get("system_prompt", output.get("system_prompts"))
     original_size = serialized_history_size(source["history"], original_system_prompt)
     retained_size = serialized_history_size(result.history, retained_system_prompt)
-    oracle_local_step = result.original_to_local(source.get("mistake_step"))
+    gold_step = source.get("mistake_step")
+    try:
+        gold_step_valid = 0 <= int(gold_step) < result.original_step_count
+    except (TypeError, ValueError):
+        gold_step_valid = False
+    oracle_local_step = result.original_to_local(gold_step) if gold_step_valid else None
+    gold_agent = canonical_agent_name(source.get("mistake_agent"))
+    retained_agent_keys = {
+        canonical_agent_name(entry.get("name", entry.get("agent", entry.get("agent_id", entry.get("role"))))).casefold()
+        for entry in result.history
+    }
+    comparable_full = dict(source)
+    comparable_full["candidate_agents"] = roster
+    view_identical_to_full = output == comparable_full
     row = {
         "trace_id": trace_id,
         "condition": condition,
@@ -106,10 +123,15 @@ def build_condition_record(
         "retained_word_tokens": retained_size["word_tokens"],
         "retained_indices": result.retained_indices,
         "local_to_original": result.local_to_original,
-        "gold_original_step": source.get("mistake_step"),
+        "gold_original_step": gold_step,
+        "gold_step_valid": gold_step_valid,
         "gold_local_step": oracle_local_step,
         "gold_step_visible": oracle_local_step is not None,
-        "gold_agent": source.get("mistake_agent"),
+        "gold_agent": gold_agent,
+        "candidate_agents": roster,
+        "gold_agent_in_roster": gold_agent.casefold() in {agent.casefold() for agent in roster},
+        "gold_agent_visible_in_telemetry": gold_agent.casefold() in retained_agent_keys,
+        "view_identical_to_full": view_identical_to_full,
     }
     return output, row
 
@@ -127,14 +149,17 @@ def write_manifest_csv(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
         "trace_id", "condition", "original_steps", "retained_steps",
         "retained_step_fraction", "original_characters", "retained_characters",
         "retained_character_fraction", "original_word_tokens", "retained_word_tokens",
-        "gold_original_step", "gold_local_step", "gold_step_visible", "gold_agent",
-        "retained_indices", "local_to_original",
+        "gold_original_step", "gold_step_valid", "gold_local_step", "gold_step_visible",
+        "gold_agent", "gold_agent_in_roster", "gold_agent_visible_in_telemetry",
+        "view_identical_to_full", "candidate_agents", "retained_indices",
+        "local_to_original",
     ]
     with path.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
             csv_row = dict(row)
+            csv_row["candidate_agents"] = json.dumps(row["candidate_agents"])
             csv_row["retained_indices"] = json.dumps(row["retained_indices"])
             csv_row["local_to_original"] = json.dumps(row["local_to_original"], sort_keys=True)
             writer.writerow(csv_row)
@@ -181,7 +206,7 @@ def main() -> None:
             manifest_rows.append(row)
 
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "source_directory": str(args.data),
         "seed": args.seed,
         "conditions": args.conditions,
@@ -197,9 +222,12 @@ def main() -> None:
         avg_steps = sum(row["retained_step_fraction"] for row in subset) / len(subset)
         avg_chars = sum(row["retained_character_fraction"] for row in subset) / len(subset)
         visible = sum(bool(row["gold_step_visible"]) for row in subset)
+        invalid = sum(not bool(row["gold_step_valid"]) for row in subset)
+        identical = sum(bool(row["view_identical_to_full"]) for row in subset)
         print(
             f"  {condition:25s} steps={avg_steps:6.1%} chars={avg_chars:6.1%} "
-            f"gold-step-visible={visible}/{len(subset)}"
+            f"gold-step-visible={visible}/{len(subset)} invalid-labels={invalid} "
+            f"identical-to-full={identical}/{len(subset)}"
         )
     print(f"Manifest: {args.output / 'manifest.json'}")
 

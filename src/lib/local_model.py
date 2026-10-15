@@ -39,10 +39,16 @@ def _load_json_data(file_path):
         print(f"Error reading file {file_path}: {e}")
         return None
 
-def _run_local_generation(model_obj, messages, model_family='llama'):
-    max_new_tokens=1024
-    temperature=0.6
-    top_p=0.95
+def _run_local_generation(
+    model_obj,
+    messages,
+    model_family='llama',
+    max_new_tokens=1024,
+    temperature=0.6,
+    top_p=0.95,
+):
+    """Generate one response, with overridable decoding for controlled experiments."""
+    do_sample = temperature > 0
 
     try:
         if hasattr(model_obj, "chat") and SamplingParams is not None:
@@ -50,6 +56,7 @@ def _run_local_generation(model_obj, messages, model_family='llama'):
                 max_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
+                seed=0,
             )
             outputs = model_obj.chat(messages, sampling_params=sampling_params)
             if outputs and outputs[0].outputs:
@@ -63,15 +70,15 @@ def _run_local_generation(model_obj, messages, model_family='llama'):
                 pipe.tokenizer.eos_token_id,
                 pipe.tokenizer.convert_tokens_to_ids("<|eot_id|>")
             ]
-            outputs = pipe(
-                messages,
-                max_new_tokens=max_new_tokens,
-                eos_token_id=terminators,
-                do_sample=True,
-                temperature=temperature,
-                top_p=top_p,
-                pad_token_id=pipe.tokenizer.eos_token_id
-            )
+            generation_kwargs = {
+                "max_new_tokens": max_new_tokens,
+                "eos_token_id": terminators,
+                "do_sample": do_sample,
+                "pad_token_id": pipe.tokenizer.eos_token_id,
+            }
+            if do_sample:
+                generation_kwargs.update(temperature=temperature, top_p=top_p)
+            outputs = pipe(messages, **generation_kwargs)
             if outputs and outputs[0]["generated_text"] and isinstance(outputs[0]["generated_text"], list):
                  return outputs[0]["generated_text"][-1]["content"]
             else:
@@ -88,14 +95,14 @@ def _run_local_generation(model_obj, messages, model_family='llama'):
                 enable_thinking=False
             )
             model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
-            generated_ids = model.generate(
-                model_inputs.input_ids,
-                max_new_tokens=max_new_tokens,
-                do_sample=True,
-                temperature=temperature,
-                top_p=top_p,
-                eos_token_id=tokenizer.eos_token_id # Use default EOS for Qwen generate
-            )
+            generation_kwargs = {
+                "max_new_tokens": max_new_tokens,
+                "do_sample": do_sample,
+                "eos_token_id": tokenizer.eos_token_id,
+            }
+            if do_sample:
+                generation_kwargs.update(temperature=temperature, top_p=top_p)
+            generated_ids = model.generate(model_inputs.input_ids, **generation_kwargs)
             generated_ids = [
                 output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
             ]

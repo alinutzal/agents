@@ -89,3 +89,26 @@ For the Hand-Crafted logs:
 - add `--is_handcrafted True` to the inference command,
 - point `--directory_path` and `--data_path` at `data/Who_and_When/Who_When/Hand-Crafted`,
 - evaluate the output file ending in `_handcrafted.txt`.
+
+## Who&When Pro: calibration and selective attribution (Laya)
+
+Implements `claim-experiment-map.md` for gaps G1, G3 and G4 on the Who&When Pro text subset. Thresholds are frozen in `experiments/prereg.json`; change them only through its `amendments` list, before looking at test numbers.
+
+| Step | Command | Output |
+|---|---|---|
+| Filter to ≤ 8,192 Laya tokens (the > 8K traces become the E9b set) | `python scripts/filter_whowhen_pro.py` | `data/whowhen_pro/text_ctx8192.jsonl`, `text_over8192.jsonl` |
+| Freeze dev/test split and subsets | `python scripts/make_manifest.py` | `experiments/manifest.json` |
+| Laya WHO/WHEN/WHAT on every trace, with raw logits | `STAGE=laya sbatch scripts/run_pro.sh` | `outputs/pro/laya_full_all.jsonl` |
+| Laya on 1K/2K windows (E9a, E9b) | `STAGE=windows sbatch scripts/run_pro.sh` | `outputs/pro/laya_windows_*.jsonl` |
+| LLM baseline with verbalized confidence | `STAGE=llm sbatch scripts/run_pro.sh` | `outputs/pro/llm_*_llm.jsonl` |
+| Verdict per claim | `python scripts/analyze_claims.py --llm outputs/pro/llm_gpt-oss-20b_llm.jsonl` | `outputs/pro/claims_report.{json,md}` |
+
+Code lives in `src/attrib/` (`whowhen_pro.py`: rendering and label resolution for each framework; `stats.py`: ECE, Brier, NLL, AUROC, DeLong, bootstrap).
+
+Notes:
+
+- Laya is scored on all usable traces; paired Laya-vs-LLM comparisons (C1.1, C1.4) use the `llm` subset, which oversamples long traces.
+- Perception modes (`P.*`) are dropped, so WHAT has 15 options. WHEN has up to 30; `--head_max_len 384` keeps the option texts distinct.
+- Single-agent frameworks (alfagent, smolagents) have no WHO question.
+- The local LLM is `gpt-oss-20b`, not the paper's `gpt-oss-120b`. Check the `llm_range_check` block of the report before reading anything into the C1.4 cost ratio. For 120b, serve it with vLLM and use `--backend openai --base_url`.
+- 4 overlong traces whose label points past the end of the trajectory are excluded (listed in the manifest).

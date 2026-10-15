@@ -10,6 +10,7 @@ Usage (from the repository root):
     python scripts/filter_whowhen_pro.py --max_len 8192 --include_answer
 """
 import os
+import sys
 import json
 import argparse
 import logging
@@ -18,94 +19,15 @@ from collections import Counter
 from huggingface_hub import hf_hub_download
 from transformers import AutoTokenizer
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from attrib.whowhen_pro import render_trace  # noqa: E402
+
 DATASET_REPO = "Leoxx/whowhen_pro"
 DATASET_FILE = "data/text.jsonl"
 TOKENIZER_REPO = "convaiinnovations/laya-multilingual"
 TOKENIZER_SUBFOLDER = "tokenizer"
 
-# Fields that reveal where the error was injected. They must never reach the auditor's input.
-LEAKY_FIELDS = {"is_injected", "is_replayed", "is_live", "phase", "injection_via"}
-# Metadata that is not part of what an agent said or saw.
-SKIPPED_FIELDS = LEAKY_FIELDS | {"kind", "observation_images", "is_final_answer"}
-# Keys used to name who produced a step, in order of preference.
-SPEAKER_FIELDS = ("agent", "agent_id", "role")
-# Keys whose values are only used in the step header.
-HEADER_FIELDS = set(SPEAKER_FIELDS) | {"step_number", "round", "position", "stage"}
-
 logger = logging.getLogger("filter_whowhen_pro")
-
-
-def _as_obj(value):
-    """Some columns are stored as JSON strings; decode them if so."""
-    if isinstance(value, str):
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError:
-            return value
-    return value
-
-
-def _fmt(value):
-    if isinstance(value, (dict, list)):
-        return json.dumps(value, ensure_ascii=False)
-    return str(value)
-
-
-def _step_header(step, idx):
-    speaker = next((step[k] for k in SPEAKER_FIELDS if step.get(k) not in (None, "")), None)
-    parts = [f"Step {idx}"]
-    for key in ("step_number", "round", "position", "stage"):
-        if step.get(key) is not None:
-            parts.append(f"{key}={step[key]}")
-    if speaker is None:
-        speaker = step.get("kind", "unknown")
-    return f"[{' '.join(parts)}] {speaker}"
-
-
-def _render_fields(obj):
-    lines = []
-    for key, value in obj.items():
-        if key in SKIPPED_FIELDS or key in HEADER_FIELDS or key == "turns":
-            continue
-        if value is None or value == "" or value == []:
-            continue
-        if key == "content":
-            lines.append(_fmt(value))
-        else:
-            lines.append(f"{key}: {_fmt(value)}")
-    return lines
-
-
-def render_trace(row, include_answer=False):
-    """Render one trace as plain text, excluding label-leaking fields and extras."""
-    task = _as_obj(row.get("task")) or {}
-    trajectory = _as_obj(row.get("trajectory")) or []
-
-    lines = []
-    if isinstance(task, dict):
-        lines.append(f"Task: {_fmt(task.get('query', ''))}")
-        if include_answer and task.get("answer") is not None:
-            lines.append(f"Answer: {_fmt(task['answer'])}")
-    else:
-        lines.append(f"Task: {_fmt(task)}")
-
-    for idx, step in enumerate(trajectory):
-        if not isinstance(step, dict):
-            lines.append(f"[Step {idx}] {_fmt(step)}")
-            continue
-        lines.append(_step_header(step, idx))
-        lines.extend(_render_fields(step))
-        # Debate/DyLAN rounds hold one turn per agent.
-        for turn in _as_obj(step.get("turns")) or []:
-            if not isinstance(turn, dict):
-                continue
-            speaker = turn.get("agent_id", "unknown")
-            if turn.get("role"):
-                speaker = f"{speaker} ({turn['role']})"
-            lines.append(f"  - {speaker}: {_fmt(turn.get('output', ''))}")
-        lines.append("")
-
-    return "\n".join(lines)
 
 
 def _rate(excluded, total):
@@ -154,17 +76,21 @@ def main():
         lengths.extend(len(ids) for ids in encoded["input_ids"])
 
     kept_path = os.path.join(args.out_dir, f"text_ctx{args.max_len}.jsonl")
+    # The excluded traces are the G4 set (E9b), scored by windows instead of full context.
+    over_path = os.path.join(args.out_dir, f"text_over{args.max_len}.jsonl")
     total_by_group, excluded_by_group = Counter(), Counter()
     kept = 0
-    with open(kept_path, "w", encoding="utf-8") as out:
+    with open(kept_path, "w", encoding="utf-8") as out, open(over_path, "w", encoding="utf-8") as over:
         for row, text, n_tokens in zip(rows, texts, lengths):
             group = (row.get("framework"), row.get("benchmark"))
             total_by_group[group] += 1
+            record = json.dumps({**row, "rendered_text": text, "n_tokens": n_tokens}, ensure_ascii=False) + "\n"
             if n_tokens > args.max_len:
                 excluded_by_group[group] += 1
+                over.write(record)
                 continue
             kept += 1
-            out.write(json.dumps({**row, "rendered_text": text, "n_tokens": n_tokens}, ensure_ascii=False) + "\n")
+            out.write(record)
 
     total = len(rows)
     excluded = total - kept
@@ -184,6 +110,7 @@ def main():
     logger.info("Kept %d/%d traces; excluded %d (exclusion rate %.2f%%)",
                 kept, total, excluded, _rate(excluded, total))
     logger.info("Filtered set: %s", kept_path)
+    logger.info("Excluded (overlong) set: %s", over_path)
     logger.info("Log: %s", log_path)
 
 

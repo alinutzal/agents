@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -A PLS0xxx
+#SBATCH -A PLS0150
 #SBATCH -p batch
 #SBATCH --gpus-per-node=1
 #SBATCH -t 4:00:00

@@ -14,6 +14,10 @@ It runs failure attribution on the [Who&When](https://huggingface.co/datasets/Ke
 - `src/inference.py` – runs an attribution method over a directory of chat logs and writes predictions to `outputs/`.
 - `src/evaluate.py` – compares a predictions file against the ground-truth labels and reports agent and step accuracy.
 - `scripts/run_infer.sh` – Slurm job that runs inference followed by evaluation.
+- `scripts/build_telemetry_ablations.py` – builds matched telemetry views and original-step mappings for the first ablation experiment.
+- `scripts/run_telemetry_experiment.py` – runs all-at-once attribution across the matched views and writes resumable JSONL.
+- `scripts/analyze_telemetry_experiment.py` – reports accuracy/cost summaries and paired bootstrap intervals.
+- `docs/telemetry_experiment.md` – complete design, commands, metrics, and experimental cautions.
 - `data/Who_and_When/Who_When/` – the dataset (`Algorithm-Generated`: 126 logs, `Hand-Crafted`: 58 logs). Not tracked by Git.
 
 ## Setup on OSC
@@ -81,6 +85,12 @@ python src/evaluate.py \
 ```
 
 It prints agent-level and step-level accuracy over all files in `--data_path`.
+
+## Telemetry-ablation experiment
+
+The first poster experiment asks which portions of an agent trace are needed to attribute a failure. It builds matched `full`, no-system, no-tool-observation, tool-only, communication-only, and responsible-agent oracle views; runs the same all-at-once auditor over each view; maps local predictions back to original Who&When step numbers; and computes paired bootstrap intervals against the full-trace baseline.
+
+See [`docs/telemetry_experiment.md`](docs/telemetry_experiment.md) for the study design and runnable commands.
 
 ## Hand-Crafted subset
 

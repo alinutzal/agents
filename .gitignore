@@ -2,3 +2,5 @@ data/Who_and_When/
 .venv/*
 data/*
 *.pyc
+__pycache__/
+outputs/telemetry/
